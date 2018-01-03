@@ -14,6 +14,9 @@ class Deploy(object):
         self._check_deploy = None
         self._rollback = None
 
+        self._get_test_cluster = lambda: Cluster("test_cluster")
+        self._get_test_micro_services = lambda: []
+
         self.__finish_before_task = False
         self.__finish_after_task = False
         self.__finish_deploy_task = False
@@ -53,6 +56,18 @@ class Deploy(object):
         if not callable(func):
             raise DeployTaskError("check_deploy func {} 参数不可用".format(func))
         self._check_deploy = func
+        return func
+
+    def test_cluster(self, func):
+        if not callable(func):
+            raise DeployTaskError("test_cluster func {} 参数不可用".format(func))
+        self._get_test_cluster = func
+        return func
+
+    def test_micro_services(self, func):
+        if not callable(func):
+            raise DeployTaskError("test_micro_services func {} 参数不可用".format(func))
+        self._get_test_micro_services = func
         return func
 
     def rollback(self, func):
@@ -99,11 +114,11 @@ class Deploy(object):
         result = self._check_deploy(task_stone)
         if result is True:
             self.__finish_check_task = True
-            return
+            return True
         if result is False:
             self.__finish_check_task = True
             self.__need_rollback = True
-            return
+            return False
         raise DeployTaskError("部署检查任务必须返回 bool 类型的值")
 
     @staticmethod
@@ -148,11 +163,16 @@ class Deploy(object):
     def run(self):
         args = self.parser.parse_args()
         deploy = args.deploy.strip()
+        cluster = None
+        micro_services = []
         if deploy == "test":
-            self.test_deploy()
-            return
-        cluster = self.get_cluster(args)
-        micro_services = self.get_micro_services(args.packages.strip())
+            cluster = self._get_test_cluster()
+            micro_services = self._get_test_micro_services()
+        if deploy == "deploy":
+            cluster = self.get_cluster(args)
+            micro_services = self.get_micro_services(args.packages.strip())
+        if cluster is None or not isinstance(cluster, Cluster):
+            raise ArgsError("集群配置错误")
         task_stone = TaskStone(cluster, micro_services)
         self._run_before_deploy_task(task_stone)
         self._run_deploy_task(task_stone)
