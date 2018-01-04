@@ -1,3 +1,4 @@
+VERSION = "0.0.3"
 USAGE = """
 
     执行部署任务：
@@ -11,7 +12,7 @@ USAGE = """
 """
 DESC = """
 
-DaoCloud Services 2.0 部署脚本
+DaoCloud Services 2.0 部署脚本 v{}
 
 
                              ,                              
@@ -34,4 +35,5 @@ DaoCloud Services 2.0 部署脚本
          
            START SAILING, FOREVER AND ALWAYS
 
-"""
+""".format(VERSION)
+

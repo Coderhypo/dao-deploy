@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
+from dao_deploy.config import VERSION
 
 setup(
     name='dao-deploy',
-    version='0.0.2',
+    version=VERSION,
     description='DaoCloud Service 2.0 deploy tools',
     author='DaoCloud',
     author_email='hypo.chen@daocloud.io',
     url='http://www.daocloud.io',
     packages=find_packages(),
-    install_requires=['requests'],
+    install_requires=['requests', 'six'],
     classifiers=[  # Optional
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -26,4 +27,3 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
 )
-

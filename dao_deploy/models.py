@@ -48,10 +48,13 @@ class MicroServices(object):
 
 
 class TaskStone(object):
-    def __init__(self, cluster, micro_services):
+    def __init__(self, cluster, micro_services, report):
+        self.cluster = cluster
+        self.micro_services = micro_services
+        self.report = report
+        self.logger = None
+        self._result = {}
         self._stone = {
-            'micro_services': micro_services,
-            'cluster': cluster,
             'config': {},
             'result': {}
         }
@@ -59,8 +62,14 @@ class TaskStone(object):
     def set_config(self, key, value):
         self._stone['config'][key] = value
 
-    def set_result(self, key, value):
-        self._stone['result'][key] = value
+    def get_config(self, key, default=None):
+        self._stone['config'].get(key, default=default)
+
+    def set_result(self, func_name, result):
+        self._result[func_name] = result
+
+    def get_result(self, func_name, default=None):
+        self._result[func_name].get(func_name, default=default)
 
     def set_value(self, key, value):
         if key in ['cluster', 'micro_services', 'config', 'result']:

@@ -8,3 +8,11 @@ class DeployTaskError(Exception):
 
 class StoneKeyError(Exception):
     pass
+
+
+class ClientError(Exception):
+    pass
+
+
+class LoggerError(Exception):
+    pass
