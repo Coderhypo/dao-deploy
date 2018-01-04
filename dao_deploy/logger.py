@@ -44,7 +44,7 @@ class Logger(object):
     def init_logger(self):
         if not self.log_path:
             raise LoggerError("找不到日志文件目录")
-        fh = logging.FileHandler(self.log_path)
+        fh = logging.FileHandler(self.log_path, encoding="utf-8")
         fh.setFormatter(file_formatter)
         self.logger.addHandler(fh)
 
