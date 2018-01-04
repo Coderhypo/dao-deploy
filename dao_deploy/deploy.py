@@ -1,4 +1,6 @@
 import uuid
+import json
+import base64
 import argparse
 import tempfile
 
@@ -232,9 +234,14 @@ class Deploy(object):
             micro_services = self._get_test_micro_services()
         if deploy == "deploy":
             cluster = self.get_cluster(args)
-            micro_services = self.get_micro_services(args.packages.strip())
-        if cluster is None or not isinstance(cluster, Cluster):
-            raise ArgsError("集群配置错误")
+            try:
+                micro_services = self.get_micro_services(
+                    json.loads(
+                        base64.b64decode(str(args.packages.strip()).encode('utf-8')).decode('utf-8')))
+            except Exception:
+                raise
+            if cluster is None or not isinstance(cluster, Cluster):
+                raise ArgsError("集群配置错误")
 
         Logger.set_log_path(self._work_dir)
         self.logger = Logger()
