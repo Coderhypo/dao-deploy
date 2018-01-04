@@ -1,4 +1,6 @@
+import uuid
 import argparse
+import tempfile
 
 from .models import Cluster, MicroServices, TaskStone
 from .logger import Logger, Report
@@ -218,14 +220,14 @@ class Deploy(object):
         args = self.parser.parse_args()
         self._task_id = args.task_id.strip()
         self._work_dir = args.work_dir.strip()
-        Logger.set_log_path(self._work_dir)
 
         deploy = args.deploy.strip()
         cluster = None
         micro_services = []
 
         if deploy == "test":
-            Logger.is_test = True
+            self._work_dir = tempfile.mkdtemp()
+            self._task_id = str(uuid.uuid4())
             cluster = self._get_test_cluster()
             micro_services = self._get_test_micro_services()
         if deploy == "deploy":
@@ -234,12 +236,14 @@ class Deploy(object):
         if cluster is None or not isinstance(cluster, Cluster):
             raise ArgsError("集群配置错误")
 
+        Logger.set_log_path(self._work_dir)
         self.logger = Logger()
         report = Report(self._task_id, self._work_dir)
         task_stone = TaskStone(cluster, micro_services, report)
         task_stone.logger = self.logger
 
         self.logger.info("准备部署, Task ID: [{}]".format(self._task_id))
+        self.logger.info("Work DIR: [{}]".format(self._work_dir))
         try:
             self._run_before_deploy_task(task_stone)
             self._run_deploy_task(task_stone)

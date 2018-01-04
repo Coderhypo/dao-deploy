@@ -1,4 +1,4 @@
-VERSION = "0.0.3"
+VERSION = "0.0.5"
 USAGE = """
 
     执行部署任务：

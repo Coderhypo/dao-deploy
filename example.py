@@ -33,7 +33,7 @@ def do_deploy(task_stone):
 def check_deploy_is_success(task_stone):
     task_stone.logger.info("check instance...")
     task_stone.logger.info("deploy success!")
-    return False
+    return True
 
 
 @d.rollback

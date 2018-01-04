@@ -1,3 +1,4 @@
+from .client import CLIENT_MAP
 from .errors import StoneKeyError
 
 
@@ -58,6 +59,13 @@ class TaskStone(object):
             'config': {},
             'result': {}
         }
+
+    @property
+    def client(self):
+        client_cls = CLIENT_MAP[self.client.cluster_type]
+        client = client_cls(self.client)
+        client.login()
+        return client
 
     def set_config(self, key, value):
         self._stone['config'][key] = value

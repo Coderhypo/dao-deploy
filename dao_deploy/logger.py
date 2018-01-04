@@ -32,7 +32,6 @@ class Logger(object):
     log_path = None
     log_dir = None
     logger = None
-    is_test = False
     init_config = False
 
     def __init__(self):
@@ -43,14 +42,11 @@ class Logger(object):
         Logger.init_config = True
 
     def init_logger(self):
-        if not self.is_test:
-            if not self.log_path:
-                raise LoggerError("找不到日志文件目录")
-            fh = logging.FileHandler(self.log_path)
-            fh.setFormatter(file_formatter)
-            self.logger.addHandler(fh)
-        ch = logging.StreamHandler()
-        self.logger.addHandler(ch)
+        if not self.log_path:
+            raise LoggerError("找不到日志文件目录")
+        fh = logging.FileHandler(self.log_path)
+        fh.setFormatter(file_formatter)
+        self.logger.addHandler(fh)
 
     @classmethod
     def set_log_path(cls, log_dir):

@@ -34,15 +34,15 @@ class BaseClient(requests.Session):
 
 
 class SaltClient(BaseClient):
-    def __init__(self, rest_url, username, password, eauth="pam"):
+    def __init__(self, cluster, eauth="pam"):
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
         }
-        self.username = username
-        self.password = password
+        self.username = cluster.username
+        self.password = cluster.password
         self.eauth = eauth
-        super().__init__(rest_url, headers)
+        super().__init__(cluster.cluster_url, headers)
 
     def _post(self, data):
         try:
@@ -95,3 +95,12 @@ class DCEClient(BaseClient):
         self.password = password
         self.dce_version = dce_version
         super().__init__(rest_url, headers)
+
+    def login(self):
+        pass
+
+
+CLIENT_MAP = {
+    "salt_stack": SaltClient,
+    "dce": DCEClient,
+}
